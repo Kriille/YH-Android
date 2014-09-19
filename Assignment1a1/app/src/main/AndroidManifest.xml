@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.kristoffer.helloworld" >
-
-    <uses-feature android:name="android.hardware.Camera" />
-
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    package="com.example.kristoffer.assignment1a1" >
 
     <application
         android:allowBackup="true"
@@ -22,8 +17,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ListView"
-            android:label="@string/title_activity_list_view" >
+            android:name=".randomActivity"
+            android:label="@string/title_activity_random" >
+        </activity>
+        <activity
+            android:name=".colorActivity"
+            android:label="@string/title_activity_color" >
         </activity>
     </application>
 

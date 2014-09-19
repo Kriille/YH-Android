@@ -74,4 +74,8 @@ public class MyActivity extends Activity {
     }
 
 
+    public void openListView(View view) {
+        Intent listIntent = new Intent(this, ListView.class);
+        startActivity(listIntent);
+    }
 }
