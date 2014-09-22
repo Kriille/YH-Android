@@ -16,7 +16,7 @@ public class colorActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color);
-        
+
         /* Finds views from the ids defined in the XML file */
         a = (RelativeLayout) findViewById(R.id.myScreen);
     }

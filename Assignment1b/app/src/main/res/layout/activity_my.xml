@@ -26,7 +26,8 @@
         android:layout_alignTop="@+id/pauseBtn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/pauseBtn" />
+        android:layout_toLeftOf="@+id/pauseBtn"
+        android:onClick="btnClick" />
 
     <Button
         android:layout_width="wrap_content"
@@ -34,7 +35,8 @@
         android:text="Pause"
         android:id="@+id/pauseBtn"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="btnClick" />
 
     <Button
         android:layout_width="wrap_content"
@@ -45,7 +47,8 @@
         android:layout_toRightOf="@+id/pauseBtn"
         android:layout_toEndOf="@+id/pauseBtn"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="btnClick" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -136,7 +139,8 @@
         android:checked="false"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/textView3"
-        android:layout_alignStart="@+id/textView3" />
+        android:layout_alignStart="@+id/textView3"
+        android:onClick="checkOnclick" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -146,7 +150,8 @@
         android:checked="false"
         android:layout_below="@+id/friendlyCheck"
         android:layout_alignLeft="@+id/friendlyCheck"
-        android:layout_alignStart="@+id/friendlyCheck" />
+        android:layout_alignStart="@+id/friendlyCheck"
+        android:onClick="checkOnclick" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -156,7 +161,8 @@
         android:checked="false"
         android:layout_below="@+id/specialsCheck"
         android:layout_alignLeft="@+id/specialsCheck"
-        android:layout_alignStart="@+id/specialsCheck" />
+        android:layout_alignStart="@+id/specialsCheck"
+        android:onClick="checkOnclick" />
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -166,27 +172,30 @@
         android:id="@+id/radioGroup"
         android:layout_alignTop="@+id/friendlyCheck"
         android:layout_toRightOf="@+id/textView">
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bad"
-        android:id="@+id/badRadio"
-        android:checked="false"
-        android:layout_alignTop="@+id/friendlyCheck" />
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ok"
-        android:id="@+id/okRadio"
-        android:checked="false"
-        android:layout_alignTop="@+id/specialsCheck"/>
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Good"
-        android:id="@+id/goodRadio"
-        android:checked="false"
-        android:layout_alignTop="@+id/opinionCheck"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bad"
+            android:id="@+id/badRadio"
+            android:checked="false"
+            android:layout_alignTop="@+id/friendlyCheck"
+            android:onClick="checkOnclick" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ok"
+            android:id="@+id/okRadio"
+            android:checked="false"
+            android:layout_alignTop="@+id/specialsCheck"
+            android:onClick="checkOnclick" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Good"
+            android:id="@+id/goodRadio"
+            android:checked="false"
+            android:layout_alignTop="@+id/opinionCheck"
+            android:onClick="checkOnclick" />
     </RadioGroup>
 
 

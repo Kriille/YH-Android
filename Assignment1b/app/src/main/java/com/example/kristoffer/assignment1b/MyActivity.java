@@ -3,178 +3,188 @@ package com.example.kristoffer.assignment1b;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 
-public class MyActivity extends Activity {
+public class MyActivity extends Activity implements View.OnClickListener, Chronometer.OnChronometerTickListener {
 
-    //ChronoMeter
-    Chronometer iChrono;
-    Button startButton, pauseButton, resetButton;
-    long lastPause = 0, waited = 30;
+    int tick = 0;
+    long lastPause = 0;
+    int tickTipLoss = 0;
+    int totalInitialValue = 0, seekBarInt;
 
-    //RadioButtons
-    RadioButton badRadioButton, okRadioButton, goodRadioButton;
 
-    //Checkbox
-    CheckBox friendlyCheckbox, specialsCheckbox, opinionCheckbox;
-
-    //EditText
+    //set EditText variable
     EditText editTextTip, editTextBill, editTextFinalBill;
 
-    //Spinner
-    Spinner solvingSpinner;
-
-    //Seekbar
+    //set EditText variable
     SeekBar tipSeekbar;
 
+    //set Checkbox variable
+    CheckBox friendlyCheckbox, specialsCheckbox, opinionCheckbox;
 
-    double tip, bill, finalBill;
-    private final static int OK = 0;
-    private final static int BAD = -1;
-    private final static int GOOD = 1;
-    private int[] checklistProcent = new int [12];
+    RadioGroup radioGroup;
 
+    //set Spinner variable
+    Spinner solvingSpinner;
 
+    //set Spinner variable
+    Chronometer timer;
+
+    //set Button variable
+    Button startButton, pauseButton, resetButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
-        tip = 0.15;
-        bill = 0.0;
-        finalBill = 0.0;
-
-
-        //RadioButtons findViewById
-        badRadioButton = (RadioButton) findViewById(R.id.badRadio);
-        okRadioButton = (RadioButton) findViewById(R.id.okRadio);
-        goodRadioButton = (RadioButton) findViewById(R.id.goodRadio);
-
-
-        //Checkbox findViewById
-        friendlyCheckbox = (CheckBox) findViewById(R.id.friendlyCheck);
-        specialsCheckbox = (CheckBox) findViewById(R.id.specialsCheck);
-        opinionCheckbox = (CheckBox) findViewById(R.id.opinionCheck);
-
-        //EditText findViewById
+        //set all veriables to an XML object
+        //EditText
         editTextTip = (EditText) findViewById(R.id.tipEditText);
         editTextBill = (EditText) findViewById(R.id.billEditText);
         editTextFinalBill = (EditText) findViewById(R.id.finalEditText);
 
-        //Spinner findViewById
-        solvingSpinner = (Spinner) findViewById(R.id.spinner);
-
-        //Seekbar findViewById
+        //SeekBar
         tipSeekbar = (SeekBar) findViewById(R.id.seekBar);
 
-        //Listners for Seekbar and bill
-        tipSeekbar.setOnSeekBarChangeListener(tipSeekbarListner);
-        editTextBill.addTextChangedListener(billListner);
+        //CheckBox
+        friendlyCheckbox = (CheckBox) findViewById(R.id.friendlyCheck);
+        specialsCheckbox = (CheckBox) findViewById(R.id.specialsCheck);
+        opinionCheckbox = (CheckBox) findViewById(R.id.opinionCheck);
 
-        //Chronometer
+        //chronometer
+        timer = (Chronometer) findViewById(R.id.chronometer);
+
+        //buttons
         startButton = (Button) findViewById(R.id.startBtn);
         pauseButton = (Button) findViewById(R.id.pauseBtn);
         resetButton = (Button) findViewById(R.id.resetBtn);
-        iChrono = (Chronometer) findViewById(R.id.chronometer);
-        TextView WatingTime;
 
-        startButton.setOnClickListener(new View.OnClickListener() {
+        //RadioGroup
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+
+        //Spinner
+        solvingSpinner = (Spinner) findViewById(R.id.spinner);
+
+        //Listener
+        timer.setOnChronometerTickListener(this);
+
+
+        //Create a spinner and fill it with array items
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.spinnerArr, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        solvingSpinner.setAdapter(adapter);
+
+        //listener when select item in spinner
+        solvingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                iChrono.setBase(SystemClock.elapsedRealtime() + lastPause);
-                iChrono.start();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
-        pauseButton.setOnClickListener(new View.OnClickListener(){
+
+        tipSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
             @Override
-            public void onClick(View view) {
-                lastPause = iChrono.getBase() - SystemClock.elapsedRealtime();
-                iChrono.stop();
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                editTextTip.setText(i + "%");
+                calcTip();
             }
-        });
-        resetButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-                iChrono.setBase(SystemClock.elapsedRealtime());
-                lastPause = 0;
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }
 
 
+    public void calcTip() {
+
+        //placeholders
+        int checkboxBonusFriendly;
+        int checkboxBonusSpecial;
+        int checkboxBonusOpinion;
+
+        int radioValue;
+        int spinnerValue;
 
 
-    private TextWatcher billListner = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        //Checkbox
+        if (friendlyCheckbox.isChecked())
+            checkboxBonusFriendly = 1;
+        else
+            checkboxBonusFriendly = 0;
 
-        }
+        if (specialsCheckbox.isChecked())
+            checkboxBonusSpecial = 1;
+        else
+            checkboxBonusSpecial = 0;
 
-        @Override
-        public void onTextChanged(CharSequence i, int i1, int i2, int i3) {
+        if (opinionCheckbox.isChecked())
+            checkboxBonusOpinion = 1;
+        else
+            checkboxBonusOpinion = 0;
 
-            try{
-                bill = Double.parseDouble(i.toString());
-            }
-            catch (NumberFormatException e){
-                bill = 0.0;
-            }
-            finalBillAndTipUpdate();
+        //-------------------END--------------
 
-        }
+        //Spinner
+        //Bad
+        if (solvingSpinner.getSelectedItemPosition() == 0)
+            spinnerValue = -1;
 
-        @Override
-        public void afterTextChanged(Editable editable) {
+            //Good
+        else if (solvingSpinner.getSelectedItemPosition() == 2)
+            spinnerValue = 1;
 
-        }
-    };
+            //Ok
+        else
+            spinnerValue = 0;
 
-    private SeekBar.OnSeekBarChangeListener tipSeekbarListner = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        //-------------------END--------------
 
-            tip = (tipSeekbar.getProgress()) * 0.01;
+        //radioGroup
+        if (radioGroup.findViewById(radioGroup.getCheckedRadioButtonId()) == findViewById(R.id.badRadio))
+            radioValue = -1;
+        else if (radioGroup.findViewById(radioGroup.getCheckedRadioButtonId()) == findViewById(R.id.goodRadio))
+            radioValue = 1;
+        else
+            radioValue = 0;
 
-            editTextTip.setText(String.format("%.02f", tip));
 
-            finalBillAndTipUpdate();
+        Float billPrice = Float.parseFloat(editTextBill.getText().toString());
+        Float value = billPrice * (Float.parseFloat(tipSeekbar.getProgress() + "") / 100);
 
-        }
+        //Calculates the percent
+        value = value + (billPrice * (checkboxBonusFriendly + checkboxBonusSpecial + checkboxBonusOpinion) / 100);
+        value = value + (billPrice * radioValue / 100);
+        value = value + (billPrice * spinnerValue / 100);
+        value = value + billPrice;
+        value = value + (billPrice * tickTipLoss / 100);
 
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };
-
-    private void finalBillAndTipUpdate(){
-        double tip = Double.parseDouble(editTextTip.getText().toString());
-        double finalbill = bill + (bill * finalBill);
-
-        editTextFinalBill.setText(String.format("%.02f", finalBill));
+        editTextFinalBill.setText(String.format("%.2f", value));
     }
 
     @Override
@@ -194,5 +204,48 @@ public class MyActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
+
+    public void checkOnclick(View view) {
+        calcTip();
+    }
+
+    @Override
+    public void onChronometerTick(Chronometer chronometer) {
+
+        tick++;
+
+        if ((tick % 30) == 0 && tick > 1) {
+            tickTipLoss--;
+            calcTip();
+
+        }
+    }
+
+    public void btnClick(View view) {
+
+        switch (view.getId()) {
+            //When Start Button is pressed
+            case R.id.startBtn:
+                timer.start();
+                timer.setBase(SystemClock.elapsedRealtime() + lastPause);
+                break;
+            //When pause Button is pressed
+            case R.id.pauseBtn:
+                timer.stop();
+                lastPause = timer.getBase() - SystemClock.elapsedRealtime();
+                break;
+            //When reset Button is pressed
+            case R.id.resetBtn:
+                timer.setBase(SystemClock.elapsedRealtime());
+                lastPause = 0;
+                break;
+        }
+
     }
 }

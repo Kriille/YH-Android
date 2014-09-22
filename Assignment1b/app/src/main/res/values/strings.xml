@@ -5,4 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <array name="spinnerArr">
+        <item name="bad">Bad</item>
+        <item name="ok">Ok</item>
+        <item name="good">Good</item>
+    </array>
+
 </resources>
