@@ -25,7 +25,7 @@ public class mainActivity extends ListActivity implements View.OnClickListener {
     final static int PLAY = 1;
     final static int PAUSE = 2;
     final static int PLAY_SONG = 3;
-    boolean isPause = false;
+    boolean isPaused = false;
     ImageButton playBtn;
     ImageButton nextBtn;
     ImageButton prevBtn;
@@ -147,44 +147,68 @@ public class mainActivity extends ListActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Intent intentService = new Intent(this, MusicService.class);
-        //when play button is pressed
-        if (view.getId() == R.id.playBtn) {
-            if (isPlaying) {
-                intentService.putExtra(ACTION, PAUSE);
-                playBtn.setImageResource(R.drawable.ic_action_play);
-                isPlaying = false;
-                isPause = true;
-                startService(intentService);
-            } else {
-                if (isPause) {
-                    intentService.putExtra(ACTION, PLAY);
-                    playBtn.setImageResource(R.drawable.ic_action_pause);
-                    isPlaying = true;
-                    startService(intentService);
-                } else {
-                    intentService.putExtra(ACTION, PLAY_SONG);
-                    playBtn.setImageResource(R.drawable.ic_action_pause);
-                    isPlaying = true;
+        switch (view.getId()){
+            // Play or pause.
+            case R.id.playBtn:
+                if(isPlaying){
+                    // Just pause playing
+                    intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PAUSE);
+                    // Show pause button.
+                    playBtn.setImageResource(R.drawable.ic_action_play);
+                    isPlaying = false;
+                    isPaused = true;
                     startService(intentService);
                 }
-            }
-            //if we reached the end of tracklist, jump to first
-        } else if (currentTrack != 1) {
-            currentTrack++;
-            if (currentTrack < TrackListHelper.numberOfTracks) {
-                intentService.putExtra(TrackListHelper.TRACK, currentTrack);
-                intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
-                startService(intentService);
-            }
-            //we have no previous track, jump to the very last track
-        } else if (currentTrack != -1) {
-            currentTrack--;
-            if (currentTrack < TrackListHelper.numberOfTracks) {
-                intentService.putExtra(TrackListHelper.TRACK, currentTrack);
-                intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
-                startService(intentService);
-            }
 
+                else {
+                    if (isPaused) {
+                        // Just start playing
+                        intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY);
+                        // Show pause button.
+                        playBtn.setImageResource(R.drawable.ic_action_pause);
+                        isPlaying = true;
+                        startService(intentService);
+                    }
+                    else {
+                        // Just start playing
+                        intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
+                        // Show pause button.
+                        playBtn.setImageResource(R.drawable.ic_action_pause);
+                        isPlaying = true;
+                        startService(intentService);
+                    }
+                }
+                break;
+
+            case R.id.nextBtn:
+                if (currentTrack != -1) {
+                    currentTrack++;
+                    if (currentTrack < TrackListHelper.numberOfTracks) {
+                        intentService.putExtra(TrackListHelper.TRACK, currentTrack);
+                        intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
+                    }
+                    else {
+                        currentTrack = 0;
+                        intentService.putExtra(TrackListHelper.TRACK, currentTrack);
+                        intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
+                    }
+                }
+                break;
+
+            case R.id.prevBtn:
+                if (currentTrack > 0) {
+                    currentTrack--;
+                    intentService.putExtra(TrackListHelper.TRACK, currentTrack);
+                    intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
+                }
+                else {
+                    currentTrack = 0;
+                    intentService.putExtra(TrackListHelper.TRACK, currentTrack);
+                    intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
+                }
+
+                break;
         }
+        startService(intentService);
     }
 }
