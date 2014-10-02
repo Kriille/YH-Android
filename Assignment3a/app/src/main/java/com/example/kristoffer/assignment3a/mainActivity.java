@@ -181,6 +181,7 @@ public class mainActivity extends ListActivity implements View.OnClickListener {
                 break;
 
             case R.id.nextBtn:
+                //if we reached the end of tracklist, jump to first
                 if (currentTrack != -1) {
                     currentTrack++;
                     if (currentTrack < TrackListHelper.numberOfTracks) {
@@ -202,6 +203,7 @@ public class mainActivity extends ListActivity implements View.OnClickListener {
                     intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
                 }
                 else {
+                    //if it is the first track replay it.
                     currentTrack = 0;
                     intentService.putExtra(TrackListHelper.TRACK, currentTrack);
                     intentService.putExtra(TrackListHelper.ACTION, TrackListHelper.PLAY_SONG);
